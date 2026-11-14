@@ -49,7 +49,7 @@ bool Lexer::match(char expected) {
     return true;
 }
 
-Token Lexer::make(TokenType type, const std::string& text) const {
+Token Lexer::make(TokenKind type, const std::string& text) const {
     Token t;
     t.type = type;
     t.text = text;
@@ -88,7 +88,7 @@ Token Lexer::readNumber() {
         while (isDigit(peek())) advance();
     }
     std::string text = src_.substr(start, pos_ - start);
-    Token t = make(TokenType::Number, text);
+    Token t = make(TokenKind::Number, text);
     t.number = std::strtod(text.c_str(), nullptr);
     return t;
 }
@@ -117,22 +117,22 @@ Token Lexer::readString(char quote) {
             value += c;
         }
     }
-    Token t = make(TokenType::String, value);
+    Token t = make(TokenKind::String, value);
     t.line = startLine;
     return t;
 }
 
 Token Lexer::readIdentifier() {
-    static const std::unordered_map<std::string, TokenType> keywords = {
-        {"jodi", TokenType::KwIf},       {"nahole", TokenType::KwElse},
-        {"jotokhon", TokenType::KwWhile}, {"sotti", TokenType::KwTrue},
-        {"mittha", TokenType::KwFalse},
+    static const std::unordered_map<std::string, TokenKind> keywords = {
+        {"jodi", TokenKind::KwIf},       {"nahole", TokenKind::KwElse},
+        {"jotokhon", TokenKind::KwWhile}, {"sotti", TokenKind::KwTrue},
+        {"mittha", TokenKind::KwFalse},
     };
     size_t start = pos_;
     while (isAlnum(peek())) advance();
     std::string text = src_.substr(start, pos_ - start);
     auto it = keywords.find(text);
-    return make(it != keywords.end() ? it->second : TokenType::Identifier, text);
+    return make(it != keywords.end() ? it->second : TokenKind::Identifier, text);
 }
 
 std::vector<Token> Lexer::tokenize() {
@@ -148,34 +148,34 @@ std::vector<Token> Lexer::tokenize() {
 
         advance();
         switch (c) {
-            case '(': out.push_back(make(TokenType::LParen, "(")); break;
-            case ')': out.push_back(make(TokenType::RParen, ")")); break;
-            case '{': out.push_back(make(TokenType::LBrace, "{")); break;
-            case '}': out.push_back(make(TokenType::RBrace, "}")); break;
-            case ',': out.push_back(make(TokenType::Comma, ",")); break;
-            case ';': out.push_back(make(TokenType::Semicolon, ";")); break;
-            case '+': out.push_back(make(TokenType::Plus, "+")); break;
-            case '-': out.push_back(make(TokenType::Minus, "-")); break;
-            case '*': out.push_back(make(TokenType::Star, "*")); break;
-            case '/': out.push_back(make(TokenType::Slash, "/")); break;
-            case '%': out.push_back(make(TokenType::Percent, "%")); break;
-            case '=': out.push_back(match('=') ? make(TokenType::EqEq, "==") : make(TokenType::Assign, "=")); break;
-            case '!': out.push_back(match('=') ? make(TokenType::NotEq, "!=") : make(TokenType::Bang, "!")); break;
-            case '<': out.push_back(match('=') ? make(TokenType::LessEq, "<=") : make(TokenType::Less, "<")); break;
-            case '>': out.push_back(match('=') ? make(TokenType::GreaterEq, ">=") : make(TokenType::Greater, ">")); break;
+            case '(': out.push_back(make(TokenKind::LParen, "(")); break;
+            case ')': out.push_back(make(TokenKind::RParen, ")")); break;
+            case '{': out.push_back(make(TokenKind::LBrace, "{")); break;
+            case '}': out.push_back(make(TokenKind::RBrace, "}")); break;
+            case ',': out.push_back(make(TokenKind::Comma, ",")); break;
+            case ';': out.push_back(make(TokenKind::Semicolon, ";")); break;
+            case '+': out.push_back(make(TokenKind::Plus, "+")); break;
+            case '-': out.push_back(make(TokenKind::Minus, "-")); break;
+            case '*': out.push_back(make(TokenKind::Star, "*")); break;
+            case '/': out.push_back(make(TokenKind::Slash, "/")); break;
+            case '%': out.push_back(make(TokenKind::Percent, "%")); break;
+            case '=': out.push_back(match('=') ? make(TokenKind::EqEq, "==") : make(TokenKind::Assign, "=")); break;
+            case '!': out.push_back(match('=') ? make(TokenKind::NotEq, "!=") : make(TokenKind::Bang, "!")); break;
+            case '<': out.push_back(match('=') ? make(TokenKind::LessEq, "<=") : make(TokenKind::Less, "<")); break;
+            case '>': out.push_back(match('=') ? make(TokenKind::GreaterEq, ">=") : make(TokenKind::Greater, ">")); break;
             case '&':
                 if (!match('&')) throw BornoError("Unexpected '&' (did you mean '&&'?)", line_);
-                out.push_back(make(TokenType::AndAnd, "&&"));
+                out.push_back(make(TokenKind::AndAnd, "&&"));
                 break;
             case '|':
                 if (!match('|')) throw BornoError("Unexpected '|' (did you mean '||'?)", line_);
-                out.push_back(make(TokenType::OrOr, "||"));
+                out.push_back(make(TokenKind::OrOr, "||"));
                 break;
             default:
                 throw BornoError(std::string("Unexpected character '") + c + "'", line_);
         }
     }
-    out.push_back(make(TokenType::End, ""));
+    out.push_back(make(TokenKind::End, ""));
     return out;
 }
 
@@ -185,17 +185,17 @@ std::vector<Token> Lexer::tokenize() {
 namespace {
 std::string describe(const Token& t) {
     switch (t.type) {
-        case TokenType::End:    return "end of file";
-        case TokenType::String: return "\"" + t.text + "\"";
+        case TokenKind::End:    return "end of file";
+        case TokenKind::String: return "\"" + t.text + "\"";
         default:                return "'" + t.text + "'";
     }
 }
 }  // namespace
 
 Parser::Parser(std::vector<Token> tokens) : toks_(std::move(tokens)) {
-    if (toks_.empty() || toks_.back().type != TokenType::End) {
+    if (toks_.empty() || toks_.back().type != TokenKind::End) {
         Token end;
-        end.type = TokenType::End;
+        end.type = TokenKind::End;
         end.line = toks_.empty() ? 1 : toks_.back().line;
         toks_.push_back(end);
     }
@@ -213,21 +213,21 @@ const Token& Parser::advance() {
     return t;
 }
 
-bool Parser::check(TokenType t) const { return peek().type == t; }
+bool Parser::check(TokenKind t) const { return peek().type == t; }
 
-bool Parser::match(TokenType t) {
+bool Parser::match(TokenKind t) {
     if (!check(t)) return false;
     advance();
     return true;
 }
 
-const Token& Parser::expect(TokenType t, const std::string& what) {
+const Token& Parser::expect(TokenKind t, const std::string& what) {
     if (check(t)) return advance();
     throw BornoError("Expected " + what + ", found " + describe(peek()), peek().line);
 }
 
 void Parser::expectSemicolon() {
-    if (match(TokenType::Semicolon)) return;
+    if (match(TokenKind::Semicolon)) return;
     // Report on the line where the statement ended, not the next one.
     int line = cur_ > 0 ? toks_[cur_ - 1].line : peek().line;
     throw BornoError("Expected ';' after statement, found " + describe(peek()), line);
@@ -237,28 +237,28 @@ void Parser::expectSemicolon() {
 
 Program Parser::parseProgram() {
     Program program;
-    while (!check(TokenType::End)) program.push_back(statement());
+    while (!check(TokenKind::End)) program.push_back(statement());
     return program;
 }
 
 StmtPtr Parser::statement() {
-    if (check(TokenType::KwElse))
+    if (check(TokenKind::KwElse))
         throw BornoError("'nahole' without a matching 'jodi'", peek().line);
-    if (check(TokenType::RBrace))
+    if (check(TokenKind::RBrace))
         throw BornoError("Unexpected '}'", peek().line);
 
-    if (check(TokenType::LBrace))    return block();
-    if (check(TokenType::KwIf))      return ifStatement();
-    if (check(TokenType::KwWhile))   return whileStatement();
-    if (check(TokenType::Identifier) && peek(1).type == TokenType::Assign) return assignment();
+    if (check(TokenKind::LBrace))    return block();
+    if (check(TokenKind::KwIf))      return ifStatement();
+    if (check(TokenKind::KwWhile))   return whileStatement();
+    if (check(TokenKind::Identifier) && peek(1).type == TokenKind::Assign) return assignment();
     return expressionStatement();
 }
 
 StmtPtr Parser::block() {
     int line = advance().line;  // '{'
     auto s = std::make_unique<Stmt>(Stmt::Kind::Block, line);
-    while (!check(TokenType::RBrace)) {
-        if (check(TokenType::End))
+    while (!check(TokenKind::RBrace)) {
+        if (check(TokenKind::End))
             throw BornoError("Missing '}' to close the block opened on line " + std::to_string(line), peek().line);
         s->body.push_back(statement());
     }
@@ -268,21 +268,21 @@ StmtPtr Parser::block() {
 
 StmtPtr Parser::ifStatement() {
     int line = advance().line;  // 'jodi'
-    expect(TokenType::LParen, "'(' after 'jodi'");
+    expect(TokenKind::LParen, "'(' after 'jodi'");
     auto s = std::make_unique<Stmt>(Stmt::Kind::If, line);
     s->expr = expression();
-    expect(TokenType::RParen, "')' after condition");
+    expect(TokenKind::RParen, "')' after condition");
     s->thenBranch = statement();
-    if (match(TokenType::KwElse)) s->elseBranch = statement();
+    if (match(TokenKind::KwElse)) s->elseBranch = statement();
     return s;
 }
 
 StmtPtr Parser::whileStatement() {
     int line = advance().line;  // 'jotokhon'
-    expect(TokenType::LParen, "'(' after 'jotokhon'");
+    expect(TokenKind::LParen, "'(' after 'jotokhon'");
     auto s = std::make_unique<Stmt>(Stmt::Kind::While, line);
     s->expr = expression();
-    expect(TokenType::RParen, "')' after condition");
+    expect(TokenKind::RParen, "')' after condition");
     s->thenBranch = statement();
     return s;
 }
@@ -318,7 +318,7 @@ ExprPtr Parser::expression() { return logicOr(); }
 
 ExprPtr Parser::logicOr() {
     ExprPtr left = logicAnd();
-    while (check(TokenType::OrOr)) {
+    while (check(TokenKind::OrOr)) {
         const Token& op = advance();
         ExprPtr right = logicAnd();
         left = binary(op, std::move(left), std::move(right));
@@ -328,7 +328,7 @@ ExprPtr Parser::logicOr() {
 
 ExprPtr Parser::logicAnd() {
     ExprPtr left = equality();
-    while (check(TokenType::AndAnd)) {
+    while (check(TokenKind::AndAnd)) {
         const Token& op = advance();
         ExprPtr right = equality();
         left = binary(op, std::move(left), std::move(right));
@@ -338,7 +338,7 @@ ExprPtr Parser::logicAnd() {
 
 ExprPtr Parser::equality() {
     ExprPtr left = comparison();
-    while (check(TokenType::EqEq) || check(TokenType::NotEq)) {
+    while (check(TokenKind::EqEq) || check(TokenKind::NotEq)) {
         const Token& op = advance();
         ExprPtr right = comparison();
         left = binary(op, std::move(left), std::move(right));
@@ -348,8 +348,8 @@ ExprPtr Parser::equality() {
 
 ExprPtr Parser::comparison() {
     ExprPtr left = term();
-    while (check(TokenType::Less) || check(TokenType::LessEq) ||
-           check(TokenType::Greater) || check(TokenType::GreaterEq)) {
+    while (check(TokenKind::Less) || check(TokenKind::LessEq) ||
+           check(TokenKind::Greater) || check(TokenKind::GreaterEq)) {
         const Token& op = advance();
         ExprPtr right = term();
         left = binary(op, std::move(left), std::move(right));
@@ -359,7 +359,7 @@ ExprPtr Parser::comparison() {
 
 ExprPtr Parser::term() {
     ExprPtr left = factor();
-    while (check(TokenType::Plus) || check(TokenType::Minus)) {
+    while (check(TokenKind::Plus) || check(TokenKind::Minus)) {
         const Token& op = advance();
         ExprPtr right = factor();
         left = binary(op, std::move(left), std::move(right));
@@ -369,7 +369,7 @@ ExprPtr Parser::term() {
 
 ExprPtr Parser::factor() {
     ExprPtr left = unary();
-    while (check(TokenType::Star) || check(TokenType::Slash) || check(TokenType::Percent)) {
+    while (check(TokenKind::Star) || check(TokenKind::Slash) || check(TokenKind::Percent)) {
         const Token& op = advance();
         ExprPtr right = unary();
         left = binary(op, std::move(left), std::move(right));
@@ -378,7 +378,7 @@ ExprPtr Parser::factor() {
 }
 
 ExprPtr Parser::unary() {
-    if (check(TokenType::Bang) || check(TokenType::Minus)) {
+    if (check(TokenKind::Bang) || check(TokenKind::Minus)) {
         const Token& op = advance();
         auto e = std::make_unique<Expr>(Expr::Kind::Unary, op.line);
         e->text = op.text;
@@ -389,17 +389,17 @@ ExprPtr Parser::unary() {
 }
 
 ExprPtr Parser::call() {
-    if (check(TokenType::Identifier) && peek(1).type == TokenType::LParen) {
+    if (check(TokenKind::Identifier) && peek(1).type == TokenKind::LParen) {
         const Token& name = advance();
         advance();  // '('
         auto e = std::make_unique<Expr>(Expr::Kind::Call, name.line);
         e->text = name.text;
-        if (!check(TokenType::RParen)) {
+        if (!check(TokenKind::RParen)) {
             do {
                 e->children.push_back(expression());
-            } while (match(TokenType::Comma));
+            } while (match(TokenKind::Comma));
         }
-        expect(TokenType::RParen, "')' after arguments");
+        expect(TokenKind::RParen, "')' after arguments");
         return e;
     }
     return primary();
@@ -408,35 +408,35 @@ ExprPtr Parser::call() {
 ExprPtr Parser::primary() {
     const Token& t = peek();
     switch (t.type) {
-        case TokenType::Number: {
+        case TokenKind::Number: {
             advance();
             auto e = std::make_unique<Expr>(Expr::Kind::Number, t.line);
             e->number = t.number;
             return e;
         }
-        case TokenType::String: {
+        case TokenKind::String: {
             advance();
             auto e = std::make_unique<Expr>(Expr::Kind::String, t.line);
             e->text = t.text;
             return e;
         }
-        case TokenType::KwTrue:
-        case TokenType::KwFalse: {
+        case TokenKind::KwTrue:
+        case TokenKind::KwFalse: {
             advance();
             auto e = std::make_unique<Expr>(Expr::Kind::Bool, t.line);
-            e->flag = (t.type == TokenType::KwTrue);
+            e->flag = (t.type == TokenKind::KwTrue);
             return e;
         }
-        case TokenType::Identifier: {
+        case TokenKind::Identifier: {
             advance();
             auto e = std::make_unique<Expr>(Expr::Kind::Variable, t.line);
             e->text = t.text;
             return e;
         }
-        case TokenType::LParen: {
+        case TokenKind::LParen: {
             advance();
             ExprPtr inner = expression();
-            expect(TokenType::RParen, "')' to close the group");
+            expect(TokenKind::RParen, "')' to close the group");
             return inner;
         }
         default:

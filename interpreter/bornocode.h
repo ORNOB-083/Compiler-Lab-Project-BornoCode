@@ -99,7 +99,7 @@ struct Value {
 // ======================================================================
 // Phase 1: turns source text into tokens.
 
-enum class TokenType {
+enum class TokenKind {
     Number, String, Identifier,
     KwIf, KwElse, KwWhile, KwTrue, KwFalse,   // jodi nahole jotokhon sotti mittha
     LParen, RParen, LBrace, RBrace, Comma, Semicolon,
@@ -110,7 +110,7 @@ enum class TokenType {
 };
 
 struct Token {
-    TokenType type = TokenType::End;
+    TokenKind type = TokenKind::End;
     std::string text;      // lexeme (string literals hold the decoded contents)
     double number = 0.0;   // value for Number tokens
     int line = 1;
@@ -131,7 +131,7 @@ private:
     char advance();
     bool match(char expected);
     void skipSpaceAndComments();
-    Token make(TokenType type, const std::string& text) const;
+    Token make(TokenKind type, const std::string& text) const;
     Token readNumber();
     Token readString(char quote);
     Token readIdentifier();
@@ -213,9 +213,9 @@ private:
 
     const Token& peek(size_t offset = 0) const;
     const Token& advance();
-    bool check(TokenType t) const;
-    bool match(TokenType t);
-    const Token& expect(TokenType t, const std::string& what);
+    bool check(TokenKind t) const;
+    bool match(TokenKind t);
+    const Token& expect(TokenKind t, const std::string& what);
     void expectSemicolon();
 
     StmtPtr statement();
