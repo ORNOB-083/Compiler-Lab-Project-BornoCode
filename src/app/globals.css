@@ -1,1 +1,114 @@
 @import "tailwindcss";
+/* @plugin "daisyui"; */
+
+nextjs-portal {
+  display: none !important;
+}
+
+@variant dark (&:where(.dark, .dark *));
+
+/* Fonts (the variables are set in app/layout.jsx) */
+@theme inline {
+  --font-sans: var(--font-inter), var(--font-bangla), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+:root {
+  color-scheme: light;
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+/* Smooth theme transition for everything */
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+/* Aurora & Tech Mesh Gradients Animations */
+@keyframes aurora-1 {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+
+  33% {
+    transform: translate(40px, -60px) scale(1.2);
+  }
+
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+
+@keyframes aurora-2 {
+  0% {
+    transform: translate(0px, 0px) scale(1);
+  }
+
+  50% {
+    transform: translate(-40px, 50px) scale(1.15);
+  }
+
+  100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+}
+
+@keyframes float-code {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+    opacity: 0.3;
+  }
+
+  50% {
+    transform: translateY(-30px) rotate(1deg);
+    opacity: 0.7;
+  }
+
+  100% {
+    transform: translateY(0px) rotate(0deg);
+    opacity: 0.3;
+  }
+}
+
+@keyframes rotate-cube {
+  from {
+    transform: rotateX(-20deg) rotateY(0deg);
+  }
+
+  to {
+    transform: rotateX(-20deg) rotateY(360deg);
+  }
+}
+
+@keyframes particle-float {
+  0% {
+    transform: translateY(0px) scale(1);
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(-100px) scale(0);
+    opacity: 0;
+  }
+}
+
+/* Respect users who prefer less motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+  }
+}
