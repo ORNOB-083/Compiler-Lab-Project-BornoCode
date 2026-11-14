@@ -1,0 +1,6 @@
+dekhao(7 + 3 * 2);
+dekhao((7 + 3) * 2);
+dekhao(17 % 5);
+dekhao(2 * 3 % 4);
+dekhao(-5 + 10);
+dekhao(10 / 4);

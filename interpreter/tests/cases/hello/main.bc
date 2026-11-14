@@ -1,0 +1,2 @@
+dekhao("Hello, BornoCode!");
+dekhao("2 + 3 =", jog(2, 3));

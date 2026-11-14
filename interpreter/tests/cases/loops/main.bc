@@ -1,0 +1,10 @@
+i = 1;
+jotokhon (i <= 3) {
+    dekhao(i);
+    i = jog(i, 1);
+}
+j = 0;
+jotokhon (j < 2) {
+    j = jog(j, 1);
+}
+dekhao("j =", j);

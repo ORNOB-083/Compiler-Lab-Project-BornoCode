@@ -1,0 +1,8 @@
+s = "Bornocode";
+dekhao(boro(s));
+dekhao(chhoto(s));
+dekhao(ulto(s));
+dekhao(doro(s));
+dekhao(jukto("a", "b", "c"));
+dekhao("tab\there");
+dekhao('single quotes');

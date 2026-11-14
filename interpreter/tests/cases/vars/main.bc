@@ -1,0 +1,5 @@
+name = "Borno";
+age = 5;
+dekhao(name, "is", age);
+age = jog(age, 1);
+dekhao(name, "is", age);

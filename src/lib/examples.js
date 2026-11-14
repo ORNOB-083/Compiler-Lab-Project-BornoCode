@@ -112,6 +112,47 @@ gaan("Amar Sonar Bangla");
 `,
     },
 
+    operators: {
+        title: "Operators and logic",
+        code: `// Arithmetic, comparison and logic
+a = 17;
+b = 5;
+dekhao("a + b =", a + b);
+dekhao("a - b =", a - b);
+dekhao("a * b =", a * b);
+dekhao("a / b =", a / b);
+dekhao("a % b =", a % b);
+dekhao("(a + b) * 2 =", (a + b) * 2);
+dekhao("a > b && b > 0:", a > b && b > 0);
+dekhao("a < b || b == 5:", a < b || b == 5);
+dekhao("!(a == b):", !(a == b));
+`,
+    },
+
+    challenge: {
+        title: "Challenge: number patterns",
+        code: `// Print 1 to 15. Multiples of 3 say "tick",
+// multiples of 5 say "toe", both say "ticktoe".
+i = 1;
+jotokhon (i <= 15) {
+    jodi (vagsesh(i, 15) == 0) {
+        dekhao(i, "ticktoe");
+    } nahole {
+        jodi (vagsesh(i, 3) == 0) {
+            dekhao(i, "tick");
+        } nahole {
+            jodi (vagsesh(i, 5) == 0) {
+                dekhao(i, "toe");
+            } nahole {
+                dekhao(i);
+            }
+        }
+    }
+    i = jog(i, 1);
+}
+`,
+    },
+
     error: {
         title: "Error example",
         code: `// This program has a mistake. Run it to see the error message.

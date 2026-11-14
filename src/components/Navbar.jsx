@@ -9,9 +9,9 @@ import ThemeToggle from "./ThemeToggle";
 const LINKS = [
   { href: "/", label: "Home" },
   { href: "/playground", label: "Playground" },
-  { href: "/learn", label: "Learn", soon: true },
+  { href: "/learn", label: "Learn" },
   { href: "/docs", label: "Docs" },
-  { href: "/games", label: "Games", soon: true },
+  { href: "/games", label: "Games" },
 ];
 
 const activeDesktop =

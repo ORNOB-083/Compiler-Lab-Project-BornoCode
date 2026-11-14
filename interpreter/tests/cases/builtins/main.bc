@@ -1,0 +1,9 @@
+dekhao(vag(10, 4));
+dekhao(shokti(2, 8));
+dekhao(mulmul(144));
+dekhao(vagsesh(17, 5));
+dekhao(nishchit(-9));
+dekhao(ekhon() != "");
+dekhao(dinjukto("2026-01-01", 31));
+dekhao(porthokko("2026-01-01", "2026-01-11"));
+dekhao(doro(jukto("ab", "cd")));

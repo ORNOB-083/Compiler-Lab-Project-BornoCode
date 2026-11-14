@@ -1,0 +1,5 @@
+dekhao(sotti, mittha);
+dekhao(jog(1,1) == 2);
+dekhao("a" == "a", "a" != "b");
+dekhao(3 > 2, 3 >= 3, 2 < 1);
+dekhao(sotti && mittha, sotti || mittha, !mittha);

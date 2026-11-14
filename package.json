@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "build:interpreter": "node src/scripts/build-interpreter.mjs"
+    "build:interpreter": "node src/scripts/build-interpreter.mjs",
+    "test:interpreter": "node interpreter/tests/run-tests.mjs"
   },
   "dependencies": {
     "lucide-react": "^1.73.0",

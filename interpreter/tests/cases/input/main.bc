@@ -1,0 +1,3 @@
+a = nite("num: ");
+b = nite("name: ");
+dekhao("a =", a, "b =", b);

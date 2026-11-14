@@ -156,6 +156,24 @@ export async function POST(request) {
         return failure("Busy", "The server is busy running other programs. Try again in a moment.", 503);
     }
 
+    // Optional: forward to a standalone execution service (e.g. the Docker
+    // image in execution-service/) for real process/container isolation.
+    if (process.env.BORNOCODE_URL) {
+        try {
+            const res = await fetch(`${process.env.BORNOCODE_URL.replace(/\/$/, "")}/execute`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ source, stdin }),
+            });
+            const data = await res.json().catch(() => null);
+            if (data && typeof data === "object" && "success" in data) {
+                return Response.json(data, { status: res.status >= 400 && res.status < 500 ? res.status : 200 });
+            }
+        } catch {
+            return failure("InterpreterError", "The execution service is unreachable.", 502);
+        }
+    }
+
     const bin = interpreterPath();
     try {
         await access(bin, constants.X_OK);

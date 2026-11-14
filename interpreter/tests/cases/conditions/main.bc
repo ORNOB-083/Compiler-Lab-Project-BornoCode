@@ -1,0 +1,14 @@
+score = 72;
+jodi (score >= 80) {
+    dekhao("A");
+} nahole {
+    jodi (score >= 60) {
+        dekhao("B");
+    } nahole {
+        dekhao("C");
+    }
+}
+jodi (mittha) {
+    dekhao("never");
+}
+dekhao("done");
