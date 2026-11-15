@@ -12,7 +12,7 @@ The project combines a custom programming language, an interactive online playgr
 
 ## Homepage Preview
 
-![BornoCode Homepage](./docs/images/homepage.png)
+![BornoCode Homepage](./src/app/docs/images/homepage.png)
 
 ---
 
